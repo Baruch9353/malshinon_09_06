@@ -97,6 +97,7 @@
   <ItemGroup>
     <Compile Include="DAL.cs" />
     <Compile Include="IntelReports.cs" />
+    <Compile Include="Meneger.cs" />
     <Compile Include="People.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

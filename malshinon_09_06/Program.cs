@@ -10,11 +10,8 @@ namespace malshinon_09_06
     {
         static void Main(string[] args)
         {
-            DAL dalPeople = new DAL();
-            dalPeople.InsertPeople("david","m");
-            Console.WriteLine(dalPeople.GetNumReports()); 
-            
-            
+            Meneger meneger = new Meneger();
+            meneger.Starter();
         }
     }
 }

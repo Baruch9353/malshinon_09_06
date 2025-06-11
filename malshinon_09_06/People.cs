@@ -7,7 +7,7 @@ using MySql.Data;
 using MySql.Data.MySqlClient;
 namespace malshinon_09_06
 {
-    public class People
+    internal class People
     {
         public int Id;
         public string FirstName;
@@ -16,10 +16,30 @@ namespace malshinon_09_06
         public string Type;
         public int NumReports=0;
         public int NumMentions=0;
-        public People(string firstName, string lastName)
+
+        DAL dAL = new DAL();
+        public bool CheckMalshin(string firstNameMalshin)
         {
-            FirstName = firstName;
-            LastName = lastName;
-        }   
+            foreach (var name in dAL.GetAllNames())
+            {
+                if (name == firstNameMalshin)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool CheckTarget(string firsrNameOfTarget)
+        {
+            foreach (var name in dAL.GetAllNames())
+            {
+                if (name == firsrNameOfTarget)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 }
