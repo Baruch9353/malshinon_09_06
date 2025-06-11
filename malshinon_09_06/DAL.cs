@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using MySql.Data.MySqlClient;
 using ZstdSharp.Unsafe;
@@ -13,7 +14,6 @@ namespace malshinon_09_06
         private string connStr = "server=127.0.0.1;user=root;password=;database=malshinon";
         private MySqlConnection _conn;
         private MySqlCommand cmd = null;
-        
 
         public DAL()
         {
@@ -53,7 +53,7 @@ namespace malshinon_09_06
                 _conn = null;
             }
         }
-        public void InsertPeople(string firstName, string lastName)
+        public void InsertPeople(string firstName, string lastName, string type)
         {
 
             try
@@ -65,8 +65,8 @@ namespace malshinon_09_06
                 { 
                     cmd.Parameters.AddWithValue("@FirstName", firstName);
                     cmd.Parameters.AddWithValue("@LastName", lastName);
-                    cmd.Parameters.AddWithValue("@SecretCode", GetSecretCode());
-                    cmd.Parameters.AddWithValue("@Type", "reporter");
+                    cmd.Parameters.AddWithValue("@SecretCode", CreateSecretCode());
+                    cmd.Parameters.AddWithValue("@Type",type);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -103,7 +103,7 @@ namespace malshinon_09_06
                     cmd.ExecuteNonQuery();
                     UpdateNumReports(malshin);
                     UpdateNumTargets(target);
-                    UpdateType(malshin);
+                    UpdateType(malshin,target);
                 }
             }
             catch (MySqlException ex)
@@ -183,7 +183,7 @@ namespace malshinon_09_06
             }
             return idPerson;
         }
-        public string GetSecretCode()
+        public string CreateSecretCode()
         {
             Random res = new Random();
             string str = "abcdefghijklmnopqrstuvwxyz123456789_)(*&^%$#@!~";
@@ -239,14 +239,15 @@ namespace malshinon_09_06
                 Console.WriteLine($"General Error: {ex.Message}");
             }
         }
-        public void UpdateType(string first_Name)
+        public void UpdateToPotentialAgent(string first_Name)
         {
             try
             {
                 openConnection();
-                string query = $"UPDATE people SET `type` = 'potential_agent' WHERE `num_reports` >10";
+                string query = $"UPDATE people SET `type` = 'potential_agent' WHERE `first_name`=@first_name";
                 using (var cmd = new MySqlCommand(query, _conn))
                 {
+                    cmd.Parameters.AddWithValue("@first_name", first_Name);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -260,5 +261,98 @@ namespace malshinon_09_06
                 Console.WriteLine($"General Error: {ex.Message}");
             }
         }
+        public void UpdateToBoth(string first_Name)
+        {
+            try
+            {
+                openConnection();
+                string query = $"UPDATE people SET `type` = 'both' WHERE `first_name`=@first_name ";
+                using (var cmd = new MySqlCommand(query, _conn))
+                {
+                    cmd.Parameters.AddWithValue("@first_name", first_Name);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+
+            catch (MySqlException ex)
+            {
+                Console.WriteLine($"MySQL Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General Error: {ex.Message}");
+            }
+        }
+        public int GetAverege(string first_Name)
+        {
+            int averege=0;
+            try
+            {
+                openConnection();
+                string query = $"SELECT AVG( LENGTH (`text`))averege  FROM `intelreports` WHERE `reporter_id`= @first_Name";
+                cmd.Parameters.AddWithValue("@first_Name", first_Name);
+                using (MySqlCommand cmd = new MySqlCommand(query, _conn));
+                {
+                    var result = cmd.ExecuteScalar();
+                    averege = Convert.ToInt32(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error reading report count: " + ex.Message);
+            }
+            return averege;
+        }
+        public string GetType(string first_Name)
+        {
+            try
+            {
+                openConnection();
+                string quary = $"SELECT `type` FROM `people` WHERE `first_name`=@first_name ";
+                using (var cmd = new MySqlCommand(quary, _conn))
+                {
+                    cmd.Parameters.AddWithValue("@first_name", first_Name);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (!reader.Read())
+                        {
+                            Console.WriteLine("No found");
+                        }
+                        string typey = reader.GetString("Type");
+                        return typey;
+                    }
+                }
+            }
+            catch (MySqlException ex)
+            {
+                Console.WriteLine($"MySQL Error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General Error: {ex.Message}");
+            }
+            return "";
+        }
+        public void UpdateType(string malshin, string target)
+        {
+            if(GetAverege(malshin)>1 && GetNumReports(malshin) > 1)
+            {
+                UpdateToPotentialAgent(malshin);
+            }
+            else if(GetType(target) == "reporter" && GetType(malshin) == "target")
+            {
+                UpdateToBoth(target);
+                UpdateToBoth(malshin);
+            }
+            else if (GetType(target)== "reporter")
+            {
+                UpdateToBoth(target);
+            }
+            else if (GetType(malshin) == "target")
+            {
+                UpdateToBoth(malshin);
+            }
+        }
+
     }
 }

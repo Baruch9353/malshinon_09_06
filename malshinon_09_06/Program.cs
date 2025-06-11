@@ -10,8 +10,14 @@ namespace malshinon_09_06
     {
         static void Main(string[] args)
         {
-            Meneger meneger = new Meneger();
-            meneger.Starter();
+            //Meneger meneger = new Meneger();
+            //meneger.Starter();
+            DAL dAL = new DAL();
+            dAL.GetNumReports("szs");
+            //dAL.UpdateToPotentialAgent("szs");
+            //Console.WriteLine(dAL.GetType("aa"));
+            //Console.WriteLine(dAL.GetAverege("szs")); 
+
         }
     }
 }
