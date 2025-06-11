@@ -14,7 +14,6 @@ namespace malshinon_09_06
         private string connStr = "server=127.0.0.1;user=root;password=;database=malshinon";
         private MySqlConnection _conn;
         private MySqlCommand cmd = null;
-
         public DAL()
         {
             try
@@ -121,8 +120,8 @@ namespace malshinon_09_06
             try
             {
                 openConnection();
-                string query = $"SELECT COUNT(*) FROM intelreports WHERE target_id = {GetPersonId(first_Name)}";
-                using (var cmd = new MySqlCommand(query, _conn));
+                string query = $"SELECT COUNT(`reporter_id`) FROM intelreports WHERE `reporter_id` = {GetPersonId(first_Name)}";
+                using (var cmd = new MySqlCommand(query, _conn))
                 {
                     var result = cmd.ExecuteScalar();
                     count = Convert.ToInt32(result);
@@ -140,8 +139,8 @@ namespace malshinon_09_06
             try
             {
                 openConnection();
-                string query = $"SELECT COUNT(*) FROM intelreports WHERE reporter_id = {GetPersonId(first_Name)}";
-                using (MySqlCommand cmd = new MySqlCommand(query, _conn)) ;
+                string query = $"SELECT COUNT(`target_id`) FROM intelreports WHERE `target_id`= {GetPersonId(first_Name)}";
+                using (MySqlCommand cmd = new MySqlCommand(query, _conn)) 
                 {
                     var result = cmd.ExecuteScalar();
                     count = Convert.ToInt32(result);
@@ -283,25 +282,26 @@ namespace malshinon_09_06
                 Console.WriteLine($"General Error: {ex.Message}");
             }
         }
-        public int GetAverege(string first_Name)
+        public decimal GetAverage(string first_Name)
         {
-            int averege=0;
+            decimal average = 0;
             try
             {
                 openConnection();
-                string query = $"SELECT AVG( LENGTH (`text`))averege  FROM `intelreports` WHERE `reporter_id`= @first_Name";
-                cmd.Parameters.AddWithValue("@first_Name", first_Name);
-                using (MySqlCommand cmd = new MySqlCommand(query, _conn));
+                string query = "SELECT AVG(CHAR_LENGTH(`text`)) FROM `intelreports` WHERE `reporter_id` = @first_Name";
+                using (var cmd = new MySqlCommand(query, _conn))
                 {
+                    cmd.Parameters.AddWithValue("@first_Name", GetPersonId(first_Name));
+
                     var result = cmd.ExecuteScalar();
-                    averege = Convert.ToInt32(result);
+                    average = Convert.ToDecimal(result);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error reading report count: " + ex.Message);
+                Console.WriteLine("Error reading average: " + ex.Message);
             }
-            return averege;
+            return average;
         }
         public string GetType(string first_Name)
         {
@@ -335,7 +335,7 @@ namespace malshinon_09_06
         }
         public void UpdateType(string malshin, string target)
         {
-            if(GetAverege(malshin)>1 && GetNumReports(malshin) > 1)
+            if(GetAverage(malshin)>1 && GetNumReports(malshin) > 1)
             {
                 UpdateToPotentialAgent(malshin);
             }
