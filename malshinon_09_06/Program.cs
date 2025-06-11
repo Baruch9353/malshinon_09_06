@@ -10,6 +10,9 @@ namespace malshinon_09_06
     {
         static void Main(string[] args)
         {
+            Meneger meneger = new Meneger();
+            meneger.Starter();
         }
     }
 }
+
