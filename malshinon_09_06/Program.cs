@@ -13,6 +13,7 @@ namespace malshinon_09_06
             Meneger meneger = new Meneger();
             meneger.Starter();
 
+
         }
     }
 }
