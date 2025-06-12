@@ -18,28 +18,16 @@ namespace malshinon_09_06
         public int NumMentions=0;
 
         DAL dAL = new DAL();
-        public bool CheckMalshin(string firstNameMalshin)
+        public bool CheckPersonIfExsist(string firstName)
         {
             foreach (var name in dAL.GetAllNames())
             {
-                if (name == firstNameMalshin)
+                if (name == firstName)
                 {
                     return true;
                 }
             }
             return false;
         }
-        public bool CheckTarget(string firsrNameOfTarget)
-        {
-            foreach (var name in dAL.GetAllNames())
-            {
-                if (name == firsrNameOfTarget)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

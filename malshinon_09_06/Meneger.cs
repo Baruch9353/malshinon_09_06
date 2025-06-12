@@ -11,43 +11,41 @@ namespace malshinon_09_06
         People people = new People();
         DAL dAL = new DAL();
 
-        public string GetFirstNameOfReporter()
+        public string SetFirstNameOfReporter()
         {
             Console.WriteLine("enter your first name");
             string first_name = Console.ReadLine();
             Validation(first_name);
             return first_name;
         }
-        public string GetLastNameOfReporter()
+        public string SetLastNameOfReporter()
         {
             Console.WriteLine("enter your last name");
             string last_name = Console.ReadLine();
             Validation(last_name);
             return last_name;
         }
-        public string GetFirstNameOfTarget()
+        public string SetFirstNameOfTarget()
         {
             Console.WriteLine("enter target first name");
             string first_name = Console.ReadLine();
             Validation(first_name);
             return first_name;
         }
-        public string GetLastNameOfTarget()
+        public string SetLastNameOfTarget()
         {
             Console.WriteLine("enter target last name");
             string last_name = Console.ReadLine();
             Validation(last_name);
             return last_name;
         }
-
-        public string GetInformation()
+        public string SetInformation()
         {
             Console.WriteLine("please enter the information");
             string infomation = Console.ReadLine();
             Validation(infomation);
             return infomation;
         }
-
         public string Validation(string text)
         {
             while (text == "")
@@ -59,31 +57,31 @@ namespace malshinon_09_06
         }
         public void Starter()
         {
-            string get_FirstNameOfReporter = GetFirstNameOfReporter();
-            string get_FirstNameOfTarget = GetFirstNameOfTarget();
+            string get_FirstNameOfReporter = SetFirstNameOfReporter();
+            string get_FirstNameOfTarget = SetFirstNameOfTarget();
 
-            bool reporter = people.CheckMalshin(get_FirstNameOfReporter);
-            bool target = people.CheckTarget(get_FirstNameOfTarget);
+            bool reporter = people.CheckPersonIfExsist(get_FirstNameOfReporter);
+            bool target = people.CheckPersonIfExsist(get_FirstNameOfTarget);
 
             if(reporter&&target)
             {
-                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, GetInformation());
+                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, SetInformation());
             }
             else if(reporter)
             {
-                dAL.InsertPeople(get_FirstNameOfTarget, GetLastNameOfTarget(),"target");
-                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, GetInformation());
+                dAL.InsertPeople(get_FirstNameOfTarget, SetLastNameOfTarget(),"target");
+                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, SetInformation());
             }
             else if(target)
             {
-                dAL.InsertPeople(get_FirstNameOfReporter, GetLastNameOfReporter(), "reporter");
-                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, GetInformation());
+                dAL.InsertPeople(get_FirstNameOfReporter, SetLastNameOfReporter(), "reporter");
+                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, SetInformation());
             }
             else
             {
-                dAL.InsertPeople(get_FirstNameOfReporter, GetLastNameOfReporter(), "reporter" );
-                dAL.InsertPeople(get_FirstNameOfTarget, GetLastNameOfTarget(), "target");
-                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, GetInformation());
+                dAL.InsertPeople(get_FirstNameOfReporter, SetLastNameOfReporter(), "reporter" );
+                dAL.InsertPeople(get_FirstNameOfTarget, SetLastNameOfTarget(), "target");
+                dAL.insertReports(get_FirstNameOfReporter, get_FirstNameOfTarget, SetInformation());
             }
         }
     }
